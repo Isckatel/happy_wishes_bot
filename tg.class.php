@@ -9,10 +9,16 @@ class TG {
     }
       
     public function send($id, $message) {   //Задаём публичную функцию send для отправки сообщений
+        //Клавиатура с командами
+        $keybord = array(
+            array('{"text":"/random"}, {"text":"/today"}'),
+        );
+
         //Заполняем массив $data инфой, которую мы через api отправим до телеграмма
         $data = array(
             'chat_id'      => $id,
             'text'     => $message,
+            'reply_markup' => json_encode(array('keyboard' => $keybord))
         );
         //Получаем ответ через функцию отправки до апи, которую создадим ниже
         $out = $this->request('sendMessage', $data);
