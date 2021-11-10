@@ -11,7 +11,8 @@ class TG {
     public function send($id, $message) {   //Задаём публичную функцию send для отправки сообщений
         //Клавиатура с командами
         $keybord = array(
-            array('{"text":"/random"}, {"text":"/today"}'),
+            array('/random', '/help'),
+            array('/today')
         );
 
         //Заполняем массив $data инфой, которую мы через api отправим до телеграмма
