@@ -12,7 +12,8 @@ class TG {
         //Клавиатура с командами
         $keybord = array(
             array('/random', '/help'),
-            array('/today')
+            array('/addDBTest'),
+            array('/reverse')
         );
 
         //Заполняем массив $data инфой, которую мы через api отправим до телеграмма

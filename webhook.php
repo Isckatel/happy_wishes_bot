@@ -24,54 +24,66 @@ $sms = $arr['message']['text']; //Получаем текст сообщения
   
 //Сразу и id получим, которому нужно отправлять всё это назад
 $tg_id = $arr['message']['chat']['id'];
-  
-//Перевернём строку задом-наперёд используя функцию cir_strrev
-$sms_rev = cir_strrev($sms);
 
-$save = false;
-//Рабочий код
-if($save){
- 
-    // подключаемся к серверу
-    // $link = mysqli_connect($host, $user, $password, $database) 
-    //     or die("Ошибка " . mysqli_error($link)); 
-    $link = mysqli_connect($host, $user, $password, $database);
-
-    if (!$link) {  
-        error_log("База данных недоступна!" . mysqli_error($link), 0);  
-    } else {
-        mysqli_set_charset($link, "utf8");    
-        // экранирования символов для mysql
-        $text = htmlentities(mysqli_real_escape_string($link, $sms)); 
-        // $text = mb_convert_encoding($text, 'UTF-8', "auto"); 
-        // создание строки запроса
-        error_log("Сообщение: " . $text,0);
-        $query ="INSERT INTO wishes VALUES(NULL, '$text', CURRENT_DATE(), true, '$tg_id', 0, 0)";
-        // выполняем запрос
-        $result = mysqli_query($link, $query);
-
-        if($result)
-        {
-            // echo "<span style='color:blue;'>Данные добавлены</span>";
-            $sms_rev .= "Пожелание добавлено!";
-        } else {
-            error_log("Ошибка " . mysqli_error($link), 0);
-        }
-
-    }
-
-    // закрываем подключение
-    mysqli_close($link);
-}
-
-$save2 = false;
-//Не работает
-if($save2) {
+switch ($sms) {
+case "/start":
+    $sms_rev = "Добро пожаловать в бота!";
+    break;
+case "/random":
+    $sms_rev = "Вы нажали рандом";
+    break;
+case "/reverse":
+    //Перевернём строку задом-наперёд используя функцию cir_strrev
+    $sms_rev = cir_strrev($sms);
+    break;
+case "/addDBTest":
+    $save2 = true;
+    //Не работает
+    if($save2) {
     $db = new db();
     $sms_rev .= $db->addMess($sms, $tg_id);    
 }
+    break;    
+default:
+    $save = true;
+    //Рабочий код
+    if($save){ 
+        // подключаемся к серверу
+        // $link = mysqli_connect($host, $user, $password, $database) 
+        //     or die("Ошибка " . mysqli_error($link)); 
+        $link = mysqli_connect($host, $user, $password, $database);
 
-//Используем наш ещё не написанный класс, для отправки сообщения в ответ
+        if (!$link) {  
+            error_log("База данных недоступна!" . mysqli_error($link), 0);  
+        } else {
+            mysqli_set_charset($link, "utf8");    
+            // экранирования символов для mysql
+            $text = htmlentities(mysqli_real_escape_string($link, $sms)); 
+            // $text = mb_convert_encoding($text, 'UTF-8', "auto"); 
+            // создание строки запроса
+            error_log("Сообщение: " . $text,0);
+            $query ="INSERT INTO wishes VALUES(NULL, '$text', CURRENT_DATE(), true, '$tg_id', 0, 0)";
+            // выполняем запрос
+            $result = mysqli_query($link, $query);
+
+            if($result)
+            {
+                // echo "<span style='color:blue;'>Данные добавлены</span>";
+                $sms_rev .= "Пожелание добавлено!";
+            } else {
+                error_log("Ошибка " . mysqli_error($link), 0);
+            }
+
+        }
+        // закрываем подключение
+        mysqli_close($link);
+    }  
+    break;
+}
+
+
+
+//Метод класса, для отправки сообщения в ответ
 $tg->send($tg_id, $sms_rev);
 
 exit('ok'); //Обязательно возвращаем "ok", чтобы телеграмм не подумал, что запрос не дошёл
