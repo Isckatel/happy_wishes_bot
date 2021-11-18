@@ -45,7 +45,7 @@ case "/addDBTest":
 }
     break;    
 default:
-    $save = true;
+    $save = false;
     //Рабочий код
     if($save){ 
         // подключаемся к серверу
@@ -77,7 +77,10 @@ default:
         }
         // закрываем подключение
         mysqli_close($link);
-    }  
+    }  else {
+    //Перевернём строку задом-наперёд используя функцию cir_strrev
+    $sms_rev = cir_strrev($sms);
+    }
     break;
 }
 
